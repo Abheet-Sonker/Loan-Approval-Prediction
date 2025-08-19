@@ -12,28 +12,25 @@ import pickle
 import numpy as np
 
 # Load the trained model
-model = pickle.load(open('model.pkl', 'rb'))
+model = pickle.load(open('personal_loan_prediction_model.pkl', 'rb'))
 
 # Streamlit UI
 st.title("loan Prediction system (created by Abheet)")
 st.write("Enter the features to get the recommendation.")
 
 # Input fields
-Age = st.number_input("Age (in years)", min_value=0, max_value=200, value=30)
 Income 	 = st.number_input("Annual Income (in thousand Rupee)", min_value=0, max_value=9999999999999, value=0)
 Family = st.number_input("Family members (in Number)", min_value=0, max_value=100, value=1)
-CCAvg = st.number_input("CCAvg", min_value=0, max_value=100, value=0)
 Education = st.selectbox("Education level 1-12th,2-UG,3-PG", ["1", "2", "3"])
 Mortgage 	= st.number_input("Mortage(in Rs)", min_value=0, max_value=999999, value=0)
-SecuritiesAccount= st.selectbox("Have Security account(Yes-1, No-0)", ["0", "1"])
 CDAccount=st.selectbox("Have CD account(Yes-1, No-0)", ["0", "1"])
 # Predict button
 if st.button("Can i get loan and What is the chances that i can get loan"):
     # Prepare input for model
-    input_features = np.array([[Age, Income, Family, CCAvg, Education, Mortgage, SecuritiesAccount, CDAccount]])
+    input_features = np.array([[Income, Family,Education, Mortgage,CDAccount]])
 
     # Make prediction
-    prediction = model.predict(input_features)[0]
+    prediction = personal_loan_prediction_model.predict(input_features)[0]
     prediction_prob=model.predict_proba(input_features)[0]
     prediction_prob_1=prediction_prob[1]
     result="Null"
