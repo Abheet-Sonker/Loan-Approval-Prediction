@@ -38,7 +38,7 @@ CDAccount = int(CDAccount.split(" - ")[0])
 # ===========================
 if st.button("🔍 Predict Loan Acceptance"):
     try:
-        # 1️⃣ Create input DataFrame
+        # ✅ 1️⃣ Create DataFrame from inputs
         input_df = pd.DataFrame([{
             "Income": Income,
             "Family": Family,
@@ -48,20 +48,24 @@ if st.button("🔍 Predict Loan Acceptance"):
             "CD.Account": CDAccount
         }])
 
-        # 2️⃣ Scale only selected columns
+        # ✅ 2️⃣ Scale only ["CCAvg", "Income", "Mortgage"]
         cols_to_scale = ["CCAvg", "Income", "Mortgage"]
-        input_df_scaled = input_df.copy()
-        input_df_scaled[cols_to_scale] = scaler.transform(input_df[cols_to_scale])
 
-        # 3️⃣ Ensure correct column order
-        final_features = input_df_scaled[["Income", "Family", "CCAvg", "Education", "Mortgage", "CD.Account"]]
+        # make a copy to avoid altering other columns
+        scaled_df = input_df.copy()
 
-        # 4️⃣ Predict
+        # transform only the 3 columns
+        scaled_df[cols_to_scale] = scaler.transform(input_df[cols_to_scale])
+
+        # ✅ 3️⃣ Ensure column order matches model training
+        final_features = scaled_df[["Income", "Family", "CCAvg", "Education", "Mortgage", "CD.Account"]]
+
+        # ✅ 4️⃣ Predict
         prediction = model.predict(final_features)[0]
         prediction_prob = model.predict_proba(final_features)[0]
         probability_of_acceptance = prediction_prob[1] * 100
 
-        # 5️⃣ Display
+        # ✅ 5️⃣ Display results
         if prediction == 1:
             st.success("✅ **Yes**, you are likely to accept the loan offer.")
             st.write(f"📈 Probability of acceptance: **{probability_of_acceptance:.2f}%**")
@@ -71,4 +75,4 @@ if st.button("🔍 Predict Loan Acceptance"):
 
     except ValueError as e:
         st.error(f"⚠️ Error: {str(e)}")
-        st.write("Make sure the scaler was trained only on `['CCAvg', 'Income', 'Mortgage']`.")
+        st.info("Make sure your scaler was fitted only on ['CCAvg', 'Income', 'Mortgage'].")
